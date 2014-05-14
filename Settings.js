@@ -22,7 +22,7 @@
                     xtype: 'rallyfieldcombobox',
                     model: Ext.identityFn('UserStory'),
                     margin: '10px 0 0 0',
-                    fieldLabel: 'Size By',
+                    fieldLabel: 'Group Columns By',
                     listeners: {
                         select: function(combo) {
                             this.fireEvent('fieldselected', combo.getRecord().get('fieldDefinition'));
@@ -64,10 +64,10 @@
                     xtype: 'rallyfieldcombobox',
                     model: Ext.identityFn('UserStory'),
                     margin: '10px 0 0 0',
-                    fieldLabel: 'Swimlane Field',
+                    fieldLabel: 'Swimlanes By',
                     listeners: {
                         select: function(combo) {
-//                            this.fireEvent('fieldselected', combo.getRecord().get('fieldDefinition'));
+                            this.fireEvent('swimlanefieldselected', combo.getRecord().get('fieldDefinition'));
                         },
                         ready: function(combo) {
                             combo.store.filterBy(function(record) {
@@ -75,13 +75,33 @@
                                 return attr && !attr.ReadOnly && attr.Constrained && attr.AttributeType !== 'OBJECT' && attr.AttributeType !== 'COLLECTION';
                             });
                             if (combo.getRecord()) {
-                                this.fireEvent('fieldselected', combo.getRecord().get('fieldDefinition'));
+                                this.fireEvent('swimlanefieldselected', combo.getRecord().get('fieldDefinition'));
                             }
                         }
-                    }
-//                    bubbleEvents: ['fieldselected', 'fieldready']
-                }
-                
+                    },
+                    bubbleEvents: ['swimlanefieldselected', 'fieldready']
+                },
+                {
+                    name: 'swimlanes',
+                    readyEvent: 'ready',
+                    fieldLabel: '',
+                    margin: '5px 0 0 80px',
+                    xtype: 'kanbanswimlanesettingsfield',
+                    shouldShowColumnLevelFieldPicker: false,
+                    defaultCardFields: config.defaultCardFields,
+                    handlesEvents: {
+                	swimlanefieldselected: function(field) {
+                            console.log("Field: ", field );
+                            this.refreshWithNewField(field);
+                        }
+                    },
+                    listeners: {
+                        ready: function() {
+                            this.fireEvent('swimlanesettingsready');
+                        }
+                    },
+                    bubbleEvents: 'swimlanesettingsready'
+                }                
             ];
 
             if (!config.shouldShowColumnLevelFieldPicker) {

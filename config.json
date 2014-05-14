@@ -1,11 +1,12 @@
 {
    "name": "Estimation Board",
-   "className": "Rally.apps.kanban.EstimationApp",
+   "className": "Rally.apps.kanban.SwimlaneKanbanApp",
    "server": "https://rally1.rallydev.com",
    "sdk": "x",
    "javascript": [
       "ColumnCardFieldPicker.js",
       "ColumnSettingsField.js",
+      "SwimlaneSettingsField.js",
       "Settings.js",
       "Column.js",
       "SwimlaneKanbanApp.js"
