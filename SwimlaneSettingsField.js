@@ -54,7 +54,7 @@
             this.callParent(arguments);
 
             this._store = Ext.create('Ext.data.Store', {
-                fields: ['column', 'shown', 'wip', 'scheduleStateMapping', 'cardFields'],
+                fields: ['column', 'used', 'scheduleStateMapping', 'cardFields'],
                 data: []
             });
 
@@ -81,8 +81,8 @@
                     flex: 2
                 },
                 {
-                    text: 'Show',
-                    dataIndex: 'shown',
+                    text: 'Show By Default',
+                    dataIndex: 'used',
                     flex: 1,
                     renderer: function (value) {
                         return value === true ? 'Yes' : 'No';
@@ -100,22 +100,6 @@
                                 {'name': 'Yes', 'value': true},
                                 {'name': 'No', 'value': false}
                             ]
-                        }
-                    }
-                },
-                {
-                    text: 'WIP',
-                    dataIndex: 'wip',
-                    flex: 1,
-                    emptyCellText: '&#8734;',
-                    editor: {
-                        xtype: 'rallytextfield',
-                        maskRe: /[0-9]/,
-                        validator: function (value) {
-                            return (value === '' || (value > 0 && value <= 9999)) || 'WIP must be > 0 and < 9999.';
-                        },
-                        rawToValue: function (value) {
-                            return value === '' ? value : parseInt(value, 10);
                         }
                     }
                 },
@@ -210,7 +194,7 @@
 
         _updateColumnCardFieldSettings: function(picker, selectedRecord, value, initialText) {
             this._store.each(function(record) {
-                if (record.get('shown')) {
+                if (record.get('used')) {
                     var cardFields = this._getCardFields(record.get('cardFields'));
 
                     if (initialText) {
@@ -230,9 +214,8 @@
         _buildSettingValue: function() {
             var columns = {};
             this._store.each(function(record) {
-                if (record.get('shown')) {
+                if (record.get('used')) {
                     columns[record.get('column')] = {
-                        wip: record.get('wip'),
                         scheduleStateMapping: record.get('scheduleStateMapping')
                     };
                     if (this.shouldShowColumnLevelFieldPicker) {
@@ -247,7 +230,7 @@
         getErrors: function() {
             var errors = [];
             if (this._storeLoaded && !Ext.Object.getSize(this._buildSettingValue())) {
-                errors.push('At least one column must be shown.');
+                errors.push('At least one column must be used.');
             }
             return errors;
         },
@@ -281,16 +264,14 @@
 
             var column = {
                 column: columnName,
-                shown: false,
-                wip: '',
+                used: false,
                 scheduleStateMapping: '',
                 cardFields: this.defaultCardFields
             };
 
             if (pref) {
                 Ext.apply(column, {
-                    shown: true,
-                    wip: pref.wip,
+                    used: true,
                     scheduleStateMapping: pref.scheduleStateMapping
                 });
 
